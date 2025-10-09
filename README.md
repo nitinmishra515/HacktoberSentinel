@@ -1,13 +1,7 @@
 # HacktoberSentinel
 
-[![Stars](https://img.shields.io/github/stars/binbandit/HacktoberSentinel?style=flat)](https://github.com/binbandit/HacktoberSentinel/stargazers)
-[![Forks](https://img.shields.io/github/forks/binbandit/HacktoberSentinel?style=flat)](https://github.com/binbandit/HacktoberSentinel/network/members)
-[![Downloads](https://img.shields.io/github/downloads/binbandit/HacktoberSentinel/total?style=flat)](https://github.com/binbandit/HacktoberSentinel/releases)
-[![CI](https://img.shields.io/github/actions/workflow/status/binbandit/HacktoberSentinel/spam-check.yml?label=workflow&style=flat)](https://github.com/binbandit/HacktoberSentinel/actions)
-
+[![CI](https://img.shields.io/github/actions/workflow/status/binbandit/HacktoberSentinel/spam-check.yml?label=workflow&style=for-the-badge)](https://github.com/binbandit/HacktoberSentinel/actions)
 Guard your repo from Hacktoberfest drive-by pull requests. HacktoberSentinel is a drop-in GitHub Action that scores incoming PRs against lightweight rules (README-only edits, contributor list bumps, generic bodies, newbie authors, and custom regex) and labels or closes suspicious submissions before they clutter your queue.
-
-![HacktoberSentinel demo showing a flagged pull request](./docs/hacktober-sentinel-demo.png)
 
 ## Quick Start
 
