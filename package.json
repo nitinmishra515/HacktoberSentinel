@@ -1,6 +1,6 @@
 {
   "name": "hacktober-sentinel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "HacktoberSentinel GitHub Action to flag Hacktoberfest spam PRs.",
   "main": "dist/index.js",
   "type": "commonjs",
