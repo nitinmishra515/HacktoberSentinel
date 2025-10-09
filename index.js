@@ -16,6 +16,13 @@ function buildRegex(pattern) {
     return null;
   }
 
+  if (trimmed.length > MAX_CUSTOM_REGEX_LENGTH) {
+    core.warning(
+      `Custom regex exceeds ${MAX_CUSTOM_REGEX_LENGTH} characters and was ignored to avoid potential performance issues.`,
+    );
+    return null;
+  }
+
   const delimiterMatch = trimmed.match(/^\/(.*)\/(\w*)$/);
   if (delimiterMatch) {
     try {
@@ -33,6 +40,20 @@ function buildRegex(pattern) {
     return null;
   }
 }
+
+const CONTRIBUTOR_REGEX = /\+\s*(?:[-*]\s*)?(?:\[[^\]\n]{1,60}\]\s*)?@?[\w-]{2,40}/i;
+const GENERIC_BODY_PATTERNS = [
+  /fixed typo/i,
+  /minor (change|fix)/i,
+  /added my name/i,
+  /add(?:ed)?\s+me/i,
+  /update(?:d)? readme/i,
+  /docs? update/i,
+  /test commit/i,
+  /hacktoberfest/i,
+  /contribution/i,
+];
+const MAX_CUSTOM_REGEX_LENGTH = 200;
 
 async function ensureLabel(octokit, owner, repo, labelName) {
   try {
@@ -54,12 +75,10 @@ async function ensureLabel(octokit, owner, repo, labelName) {
       );
 
       return Boolean(created);
-    } else {
-      throw error;
     }
-  }
 
-  return true;
+    throw error;
+  }
 }
 
 async function withPermissionWarning(fn, description) {
@@ -75,6 +94,72 @@ async function withPermissionWarning(fn, description) {
 
     throw error;
   }
+}
+
+function evaluateRules({
+  files,
+  diffText,
+  bodyText,
+  authorIsNewbie,
+  customRegex,
+  options,
+}) {
+  const {
+    enableReadmeOnly,
+    enableContributorRegex,
+    enableGenericBody,
+    enableNewContributor,
+    enableCustomRegex,
+  } = options;
+
+  const matchedRules = [];
+  let score = 0;
+
+  if (enableReadmeOnly) {
+    const readmeOnly = files.length === 1 && files[0].filename.toLowerCase() === 'readme.md';
+    core.info(`Rule readme-only: ${readmeOnly}`);
+    if (readmeOnly) {
+      score += 1;
+      matchedRules.push('readme-only');
+    }
+  }
+
+  if (enableContributorRegex) {
+    const addsContributor = CONTRIBUTOR_REGEX.test(diffText);
+    core.info(`Rule contributor-regex: ${addsContributor}`);
+    if (addsContributor) {
+      score += 1;
+      matchedRules.push('contributor-regex');
+    }
+  }
+
+  if (enableGenericBody) {
+    const genericBody = GENERIC_BODY_PATTERNS.some((regex) => regex.test(bodyText));
+    core.info(`Rule generic-body: ${genericBody}`);
+    if (genericBody) {
+      score += 1;
+      matchedRules.push('generic-body');
+    }
+  }
+
+  if (enableNewContributor) {
+    core.info(`Rule new-contributor: ${authorIsNewbie}`);
+    if (authorIsNewbie) {
+      score += 1;
+      matchedRules.push('new-contributor');
+    }
+  }
+
+  if (enableCustomRegex && customRegex) {
+    const customMatched = customRegex.test(diffText) || customRegex.test(bodyText);
+    core.info(`Rule custom-regex: ${customMatched}`);
+    if (customMatched) {
+      score += 1;
+      matchedRules.push('custom-regex');
+    }
+  }
+
+  return { score, matchedRules };
 }
 
 async function run() {
@@ -96,7 +181,8 @@ async function run() {
     const pullNumber = pullRequest.number;
 
     const closeSpam = parseBoolean(core.getInput('close-spam'));
-    const minScore = Number(core.getInput('min-score') || '2');
+    const rawMinScore = Number.parseInt(core.getInput('min-score'), 10);
+    const minScore = Number.isFinite(rawMinScore) && rawMinScore > 0 ? rawMinScore : 2;
     const labelName = core.getInput('label-name') || 'spam';
     const commentMessage =
       core.getInput('comment-message') ||
@@ -109,10 +195,7 @@ async function run() {
       true,
     );
     const enableGenericBody = parseBoolean(core.getInput('enable-generic-body') || 'true', true);
-    const enableNewContributor = parseBoolean(
-      core.getInput('enable-new-contributor') || 'true',
-      true,
-    );
+    const enableNewContributor = parseBoolean(core.getInput('enable-new-contributor') || 'true', true);
     const enableCustomRegex = parseBoolean(core.getInput('enable-custom-regex') || 'true', true);
 
     core.info(`Evaluating PR #${pullNumber} in ${owner}/${repo}`);
@@ -129,67 +212,37 @@ async function run() {
       .filter(Boolean)
       .join('\n');
 
-    const matchedRules = [];
-    let score = 0;
-
-    if (enableReadmeOnly) {
-      const readmeOnly = files.length === 1 && files[0].filename.toLowerCase() === 'readme.md';
-      core.info(`Rule readme-only: ${readmeOnly}`);
-      if (readmeOnly) {
-        score += 1;
-        matchedRules.push('readme-only');
-      }
-    }
-
-    if (enableContributorRegex) {
-      const contributorRegex = /\+\s*[-*]\s*\[.+?\]\(@.+?\)/;
-      const addsContributor = contributorRegex.test(diffText);
-      core.info(`Rule contributor-regex: ${addsContributor}`);
-      if (addsContributor) {
-        score += 1;
-        matchedRules.push('contributor-regex');
-      }
-    }
-
-    if (enableGenericBody) {
-      const bodyText = `${pullRequest.title || ''}\n${pullRequest.body || ''}`;
-      const genericPatterns = [
-        /fixed typo/i,
-        /minor (change|fix)/i,
-        /added my name/i,
-        /update(?:d)? readme/i,
-        /test commit/i,
-        /hacktoberfest/i,
-      ];
-      const genericBody = genericPatterns.some((regex) => regex.test(bodyText));
-      core.info(`Rule generic-body: ${genericBody}`);
-      if (genericBody) {
-        score += 1;
-        matchedRules.push('generic-body');
-      }
-    }
+    const bodyText = `${pullRequest.title || ''}\n${pullRequest.body || ''}`;
+    const author = pullRequest.user.login;
+    let authorIsNewbie = false;
+    const newbieThreshold = Number.parseInt(core.getInput('new-contributor-threshold') || '5', 10) || 5;
 
     if (enableNewContributor) {
-      const author = pullRequest.user.login;
-      const { data: user } = await octokit.rest.users.getByUsername({ username: author });
-      const newbieThreshold = Number(core.getInput('new-contributor-threshold') || '5');
-      const newbie = (user.public_repos || 0) < newbieThreshold;
-      core.info(`Rule new-contributor (<${newbieThreshold} public repos): ${newbie}`);
-      if (newbie) {
-        score += 1;
-        matchedRules.push('new-contributor');
+      try {
+        const { data: user } = await octokit.rest.users.getByUsername({ username: author });
+        authorIsNewbie = (user.public_repos || 0) < newbieThreshold;
+      } catch (error) {
+        core.warning(`Unable to look up author profile for '${author}': ${error.message}`);
+        authorIsNewbie = false;
       }
     }
 
-    if (enableCustomRegex && customRegex) {
-      const customMatched = customRegex.test(diffText) || customRegex.test(pullRequest.body || '');
-      core.info(`Rule custom-regex: ${customMatched}`);
-      if (customMatched) {
-        score += 1;
-        matchedRules.push('custom-regex');
-      }
-    }
+    const { score, matchedRules } = evaluateRules({
+      files,
+      diffText,
+      bodyText,
+      authorIsNewbie,
+      customRegex,
+      options: {
+        enableReadmeOnly,
+        enableContributorRegex,
+        enableGenericBody,
+        enableNewContributor,
+        enableCustomRegex,
+      },
+    });
 
+    core.info(`Rule new-contributor (<${newbieThreshold} public repos): ${authorIsNewbie}`);
     core.info(`Spam score: ${score} (threshold: ${minScore})`);
 
     if (score >= minScore) {
@@ -246,8 +299,22 @@ async function run() {
     core.setOutput('matched-rules', matchedRules.join(','));
   } catch (error) {
     core.error(`Action failed: ${error.message}`);
+    core.setOutput('flagged', 'false');
+    core.setOutput('score', '0');
+    core.setOutput('matched-rules', '');
     core.setFailed(error.message);
   }
 }
 
-run();
+if (require.main === module) {
+  run();
+}
+
+module.exports = {
+  parseBoolean,
+  buildRegex,
+  ensureLabel,
+  withPermissionWarning,
+  evaluateRules,
+  run,
+};
