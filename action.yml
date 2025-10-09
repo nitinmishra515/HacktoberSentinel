@@ -61,4 +61,4 @@ outputs:
     description: 'Comma-separated list of matched rule identifiers.'
 runs:
   using: node20
-  main: index.js
+  main: dist/index.js
