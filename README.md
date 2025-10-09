@@ -1,6 +1,13 @@
 # HacktoberSentinel
 
+[![Stars](https://img.shields.io/github/stars/binbandit/HacktoberSentinel?style=flat)](https://github.com/binbandit/HacktoberSentinel/stargazers)
+[![Forks](https://img.shields.io/github/forks/binbandit/HacktoberSentinel?style=flat)](https://github.com/binbandit/HacktoberSentinel/network/members)
+[![Downloads](https://img.shields.io/github/downloads/binbandit/HacktoberSentinel/total?style=flat)](https://github.com/binbandit/HacktoberSentinel/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/binbandit/HacktoberSentinel/spam-check.yml?label=workflow&style=flat)](https://github.com/binbandit/HacktoberSentinel/actions)
+
 Guard your repo from Hacktoberfest drive-by pull requests. HacktoberSentinel is a drop-in GitHub Action that scores incoming PRs against lightweight rules (README-only edits, contributor list bumps, generic bodies, newbie authors, and custom regex) and labels or closes suspicious submissions before they clutter your queue.
+
+![HacktoberSentinel demo showing a flagged pull request](./docs/hacktober-sentinel-demo.png)
 
 ## Quick Start
 
@@ -28,6 +35,10 @@ jobs:
 Flagged PRs receive the configured label and a polite reminder pointing contributors to legitimate Hacktoberfest guidance.
 
 > **Permissions:** Grant `pull-requests: write` and `issues: write` so the action can add labels and comments. Without them GitHub will return `Resource not accessible by integration`.
+
+## Why Now?
+
+Hacktoberfest 2025 is here, and maintainers are once again bracing for README drive-bys and “fixed typo” spam. HacktoberSentinel ships as the lightweight guardrail you can deploy in minutes. Pair it with the official [Hacktoberfest participation guidelines](https://hacktoberfest.com/participation/#spam) and recent X callouts from overwhelmed projects to keep your repo focused on meaningful contributions.
 
 ## Inputs
 
@@ -71,4 +82,4 @@ node --check index.js
 
 Use the included `.github/workflows/spam-check.yml` as a starting point for local testing with [act](https://github.com/nektos/act) or on a fork.
 
-Star the repo, spread the word, and give maintainers their Octobers back.
+Install now and tweet your setup! `#HacktoberSentinel`
