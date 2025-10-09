@@ -40,6 +40,10 @@ Flagged PRs receive the configured label and a polite reminder pointing contribu
 
 Hacktoberfest 2025 is here, and maintainers are once again bracing for README drive-bys and “fixed typo” spam. HacktoberSentinel ships as the lightweight guardrail you can deploy in minutes. Pair it with the official [Hacktoberfest participation guidelines](https://hacktoberfest.com/participation/#spam) and recent X callouts from overwhelmed projects to keep your repo focused on meaningful contributions.
 
+## Permissions & Security
+
+HacktoberSentinel only requires `issues: write` and `pull-requests: write` to add labels, drop comments, and (optionally) close spammy PRs. Keep the token scope limited to those permissions and disable auto-close if you would rather keep workflows read-only.
+
 ## Inputs
 
 | Input | Default | Description |
@@ -77,7 +81,9 @@ A PR matching two or more rules (configurable) is labeled, commented, and option
 
 ```bash
 pnpm install
-node --check index.js
+pnpm lint
+pnpm test
+pnpm run build
 ```
 
 Use the included `.github/workflows/spam-check.yml` as a starting point for local testing with [act](https://github.com/nektos/act) or on a fork.
