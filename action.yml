@@ -20,7 +20,7 @@ inputs:
   comment-message:
     description: 'Comment to post when a PR is flagged.'
     required: false
-    default: 'This PR appears low-effort (e.g., README tweak). Please review our contrib guide. For Hacktoberfest tips: https://hacktoberfest.com/participation/#spam'
+    default: 'This PR looks low-effort (e.g., README tweak). Please take another pass and use our contribution guide for context. Hacktoberfest tips: https://hacktoberfest.com/participation/#spam'
   min-score:
     description: 'Number of matched rules required to flag a PR.'
     required: false

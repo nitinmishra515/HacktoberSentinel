@@ -76,7 +76,7 @@ async function run() {
     const labelName = core.getInput('label-name') || 'spam';
     const commentMessage =
       core.getInput('comment-message') ||
-      'This PR appears low-effort (e.g., README tweak). Please review our contrib guide. For Hacktoberfest tips: https://hacktoberfest.com/participation/#spam';
+      'This PR looks low-effort (e.g., README tweak). Please take another pass and use our contribution guide for context. Hacktoberfest tips: https://hacktoberfest.com/participation/#spam';
 
     const customRegex = buildRegex(core.getInput('custom-regex'));
     const enableReadmeOnly = parseBoolean(core.getInput('enable-readme-only') || 'true', true);
