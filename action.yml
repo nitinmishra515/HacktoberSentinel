@@ -1,0 +1,64 @@
+name: HacktoberSentinel
+description: 'Spam detector for Hacktoberfest PRs'
+author: binbandit
+branding:
+  color: orange
+  icon: shield
+timeout-minutes: 5
+inputs:
+  github-token:
+    description: 'GitHub token with repo scope (use the default secrets.GITHUB_TOKEN)'
+    required: true
+  close-spam:
+    description: 'Auto-close PRs that exceed the spam threshold.'
+    required: false
+    default: 'false'
+  label-name:
+    description: "Label to apply to flagged PRs. Created automatically if it doesn't exist."
+    required: false
+    default: 'spam'
+  comment-message:
+    description: 'Comment to post when a PR is flagged.'
+    required: false
+    default: 'This PR appears low-effort (e.g., README tweak). Please review our contrib guide. For Hacktoberfest tips: https://hacktoberfest.com/participation/#spam'
+  min-score:
+    description: 'Number of matched rules required to flag a PR.'
+    required: false
+    default: '2'
+  custom-regex:
+    description: 'Optional custom regex (or /pattern/flags) evaluated against the diff and body.'
+    required: false
+  enable-readme-only:
+    description: 'Enable rule: PR changes only README.md.'
+    required: false
+    default: 'true'
+  enable-contributor-regex:
+    description: 'Enable rule: Adds contributor-style lines.'
+    required: false
+    default: 'true'
+  enable-generic-body:
+    description: 'Enable rule: Generic PR title/body phrases.'
+    required: false
+    default: 'true'
+  enable-new-contributor:
+    description: 'Enable rule: Author has fewer public repos than the threshold.'
+    required: false
+    default: 'true'
+  enable-custom-regex:
+    description: 'Enable rule: Custom regex.'
+    required: false
+    default: 'true'
+  new-contributor-threshold:
+    description: 'Threshold for public repos considered low signal.'
+    required: false
+    default: '5'
+outputs:
+  flagged:
+    description: 'Whether the PR was flagged as spam.'
+  score:
+    description: 'Spam score assigned to the PR.'
+  matched-rules:
+    description: 'Comma-separated list of matched rule identifiers.'
+runs:
+  using: node20
+  main: index.js
