@@ -37,19 +37,43 @@ function buildRegex(pattern) {
 async function ensureLabel(octokit, owner, repo, labelName) {
   try {
     await octokit.rest.issues.getLabel({ owner, repo, name: labelName });
+    return true;
   } catch (error) {
     if (error.status === 404) {
       core.info(`Label '${labelName}' not found. Creating it.`);
-      await octokit.rest.issues.createLabel({
-        owner,
-        repo,
-        name: labelName,
-        color: 'B60205',
-        description: 'Flagged by HacktoberSentinel as potential spam.',
-      });
+      const created = await withPermissionWarning(
+        () =>
+          octokit.rest.issues.createLabel({
+            owner,
+            repo,
+            name: labelName,
+            color: 'B60205',
+            description: 'Flagged by HacktoberSentinel as potential spam.',
+          }),
+        'create labels in this repository',
+      );
+
+      return Boolean(created);
     } else {
       throw error;
     }
+  }
+
+  return true;
+}
+
+async function withPermissionWarning(fn, description) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (error && error.status === 403) {
+      core.warning(
+        `Missing permissions to ${description}. Grant pull-requests: write and issues: write in the workflow permissions block.`,
+      );
+      return null;
+    }
+
+    throw error;
   }
 }
 
@@ -169,24 +193,47 @@ async function run() {
     core.info(`Spam score: ${score} (threshold: ${minScore})`);
 
     if (score >= minScore) {
-      await ensureLabel(octokit, owner, repo, labelName);
-      await octokit.rest.issues.addLabels({
-        owner,
-        repo,
-        issue_number: pullNumber,
-        labels: [labelName],
-      });
+      const labelReady = await ensureLabel(octokit, owner, repo, labelName);
 
-      await octokit.rest.issues.createComment({
-        owner,
-        repo,
-        issue_number: pullNumber,
-        body: commentMessage,
-      });
+      if (labelReady) {
+        await withPermissionWarning(
+          () =>
+            octokit.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: pullNumber,
+              labels: [labelName],
+            }),
+          'add labels to pull requests',
+        );
+      }
+
+      await withPermissionWarning(
+        () =>
+          octokit.rest.issues.createComment({
+            owner,
+            repo,
+            issue_number: pullNumber,
+            body: commentMessage,
+          }),
+        'post review comments on pull requests',
+      );
 
       if (closeSpam) {
-        await octokit.rest.pulls.update({ owner, repo, pull_number: pullNumber, state: 'closed' });
-        core.info('PR closed due to spam threshold.');
+        const closed = await withPermissionWarning(
+          () =>
+            octokit.rest.pulls.update({
+              owner,
+              repo,
+              pull_number: pullNumber,
+              state: 'closed',
+            }),
+          'close pull requests automatically',
+        );
+
+        if (closed) {
+          core.info('PR closed due to spam threshold.');
+        }
       }
 
       core.setOutput('flagged', 'true');
