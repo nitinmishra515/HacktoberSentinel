@@ -1,6 +1,7 @@
 # HacktoberSentinel
 
 [![CI](https://img.shields.io/github/actions/workflow/status/binbandit/HacktoberSentinel/spam-check.yml?label=workflow&style=for-the-badge)](https://github.com/binbandit/HacktoberSentinel/actions)
+
 Guard your repo from Hacktoberfest drive-by pull requests. HacktoberSentinel is a drop-in GitHub Action that scores incoming PRs against lightweight rules (README-only edits, contributor list bumps, generic bodies, newbie authors, and custom regex) and labels or closes suspicious submissions before they clutter your queue.
 
 ## Quick Start
