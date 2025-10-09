@@ -12,6 +12,9 @@ on: [pull_request]
 
 jobs:
   hacktober-sentinel:
+    permissions:
+      pull-requests: write
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +26,8 @@ jobs:
 ```
 
 Flagged PRs receive the configured label and a polite reminder pointing contributors to legitimate Hacktoberfest guidance.
+
+> **Permissions:** Grant `pull-requests: write` and `issues: write` so the action can add labels and comments. Without them GitHub will return `Resource not accessible by integration`.
 
 ## Inputs
 
